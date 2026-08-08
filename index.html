@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HACKERPANKU009 — Cyber Security Courses & Career Tracks</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0916;
+    --surface:#141127;
+    --surface-raised:#1b1733;
+    --line:#2c2650;
+    --text:#eee9fb;
+    --muted:#8d84b3;
+    --cyan:#00f0ff;
+    --pink:#ff2e88;
+    --violet:#8b5cf6;
+    --green:#00e6a0;
+    --font-display:'Orbitron', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+    --font-sans:'Inter', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:var(--font-sans);
+    line-height:1.6;
+    overflow-x:hidden;
+    background-image:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(139,92,246,0.20), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(0,240,255,0.10), transparent 60%),
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size: auto, auto, 42px 42px, 42px 42px;
+  }
+  a{color:inherit; text-decoration:none;}
+  img{max-width:100%; display:block;}
+  .wrap{max-width:1200px; margin:0 auto; padding:0 32px;}
+  .mono{font-family:var(--font-mono);}
+  ::selection{background:var(--pink); color:#0a0916;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:3px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important; scroll-behavior:auto !important;}
+  }
+
+  /* ---------- Splash / Welcome screen ---------- */
+  #splash{
+    position:fixed; inset:0; z-index:9999;
+    background:var(--ink);
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column;
+    background-image:
+      radial-gradient(ellipse 900px 500px at 50% 30%, rgba(139,92,246,0.25), transparent 60%),
+      linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+    background-size:auto, 42px 42px, 42px 42px;
+    transition:opacity .6s ease, visibility .6s ease;
+  }
+  #splash.hide{opacity:0; visibility:hidden; pointer-events:none;}
+  body.locked{overflow:hidden;}
+  .splash-inner{text-align:center; padding:0 24px;}
+  .splash-boot{
+    font-family:var(--font-mono); font-size:12.5px; color:var(--muted);
+    min-height:110px; text-align:left; max-width:360px; margin:0 auto 28px;
+  }
+  .splash-boot .bline{opacity:0; transform:translateY(4px); animation:bootIn .35s ease forwards; margin-bottom:6px;}
+  .splash-boot .bline .ok{color:var(--green);}
+  .splash-boot .bline .c1{animation-delay:.1s;}
+  .splash-boot .bline .c2{animation-delay:.4s;}
+  .splash-boot .bline .c3{animation-delay:.7s;}
+  .splash-boot .bline:nth-child(1){animation-delay:.1s;}
+  .splash-boot .bline:nth-child(2){animation-delay:.45s;}
+  .splash-boot .bline:nth-child(3){animation-delay:.8s;}
+  @keyframes bootIn{to{opacity:1; transform:translateY(0);}}
+  .splash-glyph{
+    width:64px; height:64px; border-radius:16px; margin:0 auto 26px;
+    background:linear-gradient(135deg, var(--cyan), var(--pink));
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-size:26px; font-weight:700; color:#0a0916;
+    opacity:0; transform:scale(.7); animation:glyphIn .5s ease forwards; animation-delay:1.05s;
+    box-shadow:0 0 50px -6px rgba(0,240,255,0.5);
+  }
+  @keyframes glyphIn{to{opacity:1; transform:scale(1);}}
+  .splash-title{
+    font-family:var(--font-display); font-weight:800;
+    font-size:clamp(22px, 4vw, 38px); letter-spacing:0.5px;
+    opacity:0; transform:translateY(10px); animation:titleIn .55s ease forwards; animation-delay:1.3s;
+  }
+  @keyframes titleIn{to{opacity:1; transform:translateY(0);}}
+  .splash-sub{
+    font-family:var(--font-mono); font-size:13px; color:var(--muted); margin-top:12px;
+    opacity:0; animation:subIn .5s ease forwards; animation-delay:1.75s;
+  }
+  @keyframes subIn{to{opacity:1;}}
+  .splash-skip{
+    position:absolute; bottom:32px; left:50%; transform:translateX(-50%);
+    font-family:var(--font-mono); font-size:11.5px; color:var(--muted);
+    opacity:0; animation:subIn .5s ease forwards; animation-delay:2.1s;
+    cursor:pointer; background:none; border:1px solid var(--line); padding:8px 16px; border-radius:20px;
+    transition:border-color .15s, color .15s;
+  }
+  .splash-skip:hover{border-color:var(--cyan); color:var(--cyan);}
+
+  /* ---------- Header ---------- */
+  header{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background:rgba(10,9,22,0.82);
+    backdrop-filter:blur(12px);
+    border-bottom:1px solid var(--line);
+  }
+  header::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
+  }
+  .nav{display:flex; align-items:center; justify-content:space-between; height:74px;}
+  .logo{
+    font-family:var(--font-display); font-weight:800; font-size:16px; letter-spacing:0.5px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .logo .glyph{
+    width:30px; height:30px; border-radius:7px; flex-shrink:0;
+    background:linear-gradient(135deg, var(--cyan), var(--pink));
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-size:14px; font-weight:700; color:#0a0916;
+  }
+  .logo span.txt{background:linear-gradient(90deg, var(--cyan), var(--pink)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .navlinks{display:flex; gap:36px; align-items:center;}
+  .navlinks a{font-size:14px; color:var(--muted); font-weight:500; transition:color .15s;}
+  .navlinks a:hover{color:var(--text);}
+  .btn{
+    font-family:var(--font-mono); font-weight:600; font-size:13px;
+    padding:11px 20px; border-radius:6px; cursor:pointer; border:1px solid transparent;
+    display:inline-flex; align-items:center; gap:8px; letter-spacing:0.3px;
+    transition:transform .15s, background .15s, border-color .15s, box-shadow .15s;
+  }
+  .btn-primary{background:linear-gradient(90deg, var(--cyan), var(--violet)); color:#0a0916; box-shadow:0 0 0 rgba(0,240,255,0);}
+  .btn-primary:hover{transform:translateY(-1px); box-shadow:0 6px 24px -4px rgba(0,240,255,0.45);}
+  .btn-ghost{border-color:var(--line); color:var(--text);}
+  .btn-ghost:hover{border-color:var(--cyan); color:var(--cyan);}
+  .navcta{display:flex; align-items:center; gap:14px;}
+  .burger{display:none; flex-direction:column; gap:5px; background:none; border:none; cursor:pointer; padding:8px;}
+  .burger span{width:22px; height:2px; background:var(--text);}
+
+  /* ---------- Hero ---------- */
+  .hero{padding:172px 0 100px; position:relative; overflow:hidden;}
+  .hero-single{max-width:760px; margin:0 auto; text-align:center;}
+  .hero-actions{justify-content:center;}
+  .eyebrow{
+    font-family:var(--font-mono); font-size:12.5px; color:var(--green); letter-spacing:1px;
+    display:inline-flex; align-items:center; gap:10px; margin-bottom:22px;
+    border:1px solid rgba(0,230,160,0.3); background:rgba(0,230,160,0.06);
+    padding:7px 12px; border-radius:5px;
+  }
+  .eyebrow::before{content:''; width:6px; height:6px; background:var(--green); border-radius:50%; animation:blink 1.6s infinite;}
+  @keyframes blink{0%,100%{opacity:1;} 50%{opacity:0.25;}}
+  h1{
+    font-family:var(--font-display); font-weight:800; font-size:clamp(32px,4.1vw,50px);
+    line-height:1.14; letter-spacing:-0.5px; margin-bottom:22px;
+  }
+  h1 .cursor{display:inline-block; width:0.4ch; background:var(--pink); animation:cursorblink 1s steps(1) infinite; margin-left:2px;}
+  @keyframes cursorblink{0%,49%{opacity:1;} 50%,100%{opacity:0;}}
+  .grad-text{background:linear-gradient(90deg, var(--cyan), var(--pink)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .hero p.lede{font-size:17px; color:var(--muted); max-width:560px; margin:0 auto 34px; text-align:center;}
+  .hero-actions{display:flex; gap:14px; flex-wrap:wrap; justify-content:center;}
+  .hero-note{margin-top:28px; font-size:13px; color:var(--muted); font-family:var(--font-mono);}
+
+  /* terminal panel */
+  .terminal{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    box-shadow:0 30px 90px -20px rgba(139,92,246,0.25), 0 0 0 1px rgba(0,240,255,0.04) inset;
+    overflow:hidden;
+  }
+  .term-bar{
+    display:flex; align-items:center; gap:8px; padding:12px 16px;
+    background:var(--surface-raised); border-bottom:1px solid var(--line);
+  }
+  .term-bar .tdot{width:10px; height:10px; border-radius:50%;}
+  .term-title{margin-left:auto; font-family:var(--font-mono); font-size:11.5px; color:var(--muted);}
+  .term-body{padding:20px 22px; font-family:var(--font-mono); font-size:13px; color:#cfc9ea; min-height:260px;}
+  .term-body .ln{margin-bottom:9px; white-space:pre-wrap;}
+  .term-body .prompt{color:var(--cyan);}
+  .term-body .out{color:var(--muted);}
+  .term-body .flag{color:var(--pink);}
+  .term-body .ok{color:var(--green);}
+
+  section{padding:96px 0;}
+  .section-head{max-width:620px; margin-bottom:52px;}
+  .kicker{font-family:var(--font-mono); font-size:12px; color:var(--pink); letter-spacing:1.5px; margin-bottom:12px; display:block;}
+  h2{font-family:var(--font-display); font-size:clamp(24px,2.7vw,32px); font-weight:700; letter-spacing:-0.3px; margin-bottom:14px;}
+  .section-head p{color:var(--muted); font-size:15.5px;}
+
+  /* ---------- Stats ---------- */
+  .stats-bar{border-top:1px solid var(--line); border-bottom:1px solid var(--line);}
+  .stats-grid{display:grid; grid-template-columns:repeat(4,1fr);}
+  .stat{padding:36px 32px; border-right:1px solid var(--line);}
+  .stat:last-child{border-right:none;}
+  .stat .num{font-family:var(--font-display); font-size:clamp(22px,2.4vw,30px); font-weight:800; background:linear-gradient(90deg, var(--cyan), var(--violet)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .stat .label{font-size:12.5px; color:var(--muted); margin-top:8px; text-transform:uppercase; letter-spacing:0.5px;}
+
+  /* ---------- Courses ---------- */
+  .course-carousel{position:relative; max-width:620px; margin:0 auto;}
+  .course-viewport{overflow:hidden; border-radius:12px;}
+  .course-track{display:flex; transition:transform .45s cubic-bezier(.65,.05,.36,1);}
+  .course-slide{flex:0 0 100%; padding:2px;}
+
+  .carousel-nav{display:flex; align-items:center; justify-content:center; gap:22px; margin-top:28px;}
+  .nav-btn{
+    width:46px; height:46px; border-radius:50%; border:1px solid var(--line); background:var(--surface);
+    color:var(--text); font-size:18px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:border-color .15s, color .15s, transform .15s, box-shadow .15s;
+    font-family:var(--font-mono);
+  }
+  .nav-btn:hover{border-color:var(--cyan); color:var(--cyan); transform:translateY(-2px); box-shadow:0 8px 20px -8px rgba(0,240,255,0.4);}
+  .nav-btn:active{transform:translateY(0);}
+  .carousel-counter{font-family:var(--font-mono); font-size:13px; color:var(--muted); min-width:56px; text-align:center;}
+
+  .carousel-dots{display:flex; justify-content:center; gap:8px; margin-top:20px;}
+  .dot{width:7px; height:7px; border-radius:50%; background:var(--line); border:none; cursor:pointer; padding:0; transition:background .2s, transform .2s;}
+  .dot.active{background:linear-gradient(90deg, var(--cyan), var(--pink)); transform:scale(1.3);}
+  .card{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px;
+    padding:0; overflow:hidden; position:relative; transition:transform .2s, border-color .2s, box-shadow .2s;
+    display:flex; flex-direction:column;
+  }
+  .card:hover{transform:translateY(-4px); border-color:#4a4180; box-shadow:0 16px 40px -16px rgba(139,92,246,0.35);}
+  .card-stripe{height:4px; width:100%;}
+  .lvl1 .card-stripe{background:linear-gradient(90deg, var(--green), var(--cyan));}
+  .lvl2 .card-stripe{background:linear-gradient(90deg, var(--cyan), var(--violet));}
+  .lvl3 .card-stripe{background:linear-gradient(90deg, var(--violet), var(--pink));}
+  .card-body{padding:24px; display:flex; flex-direction:column; flex:1;}
+  .card-top{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:14px;}
+  .clearance{
+    font-family:var(--font-mono); font-size:10.5px; letter-spacing:0.8px; padding:5px 9px;
+    border-radius:4px; border:1px solid var(--line); color:var(--muted);
+  }
+  .lvl1 .clearance{color:var(--green); border-color:rgba(0,230,160,0.3);}
+  .lvl2 .clearance{color:var(--cyan); border-color:rgba(0,240,255,0.3);}
+  .lvl3 .clearance{color:var(--pink); border-color:rgba(255,46,136,0.3);}
+  .card h3{font-size:18px; font-weight:700; margin-bottom:10px; font-family:var(--font-sans);}
+  .card p{font-size:14px; color:var(--muted); margin-bottom:20px; flex:1;}
+  .card-meta{display:flex; justify-content:space-between; align-items:center; padding-top:16px; border-top:1px solid var(--line);}
+  .price{font-family:var(--font-mono); font-weight:700; font-size:16px; color:var(--text);}
+  .duration{font-size:12.5px; color:var(--muted); font-family:var(--font-mono);}
+  .card-link{font-size:13px; color:var(--cyan); font-weight:600; margin-top:14px; display:inline-flex; align-items:center; gap:6px;}
+
+  /* ---------- Log / curriculum ---------- */
+  .log-panel{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:8px 0;
+  }
+  .log-line{
+    display:grid; grid-template-columns:150px 150px 1fr; gap:18px; padding:14px 24px;
+    font-family:var(--font-mono); font-size:13px; border-bottom:1px solid var(--line); align-items:center;
+  }
+  .log-line:last-child{border-bottom:none;}
+  .log-time{color:var(--muted);}
+  .log-tag{color:var(--cyan); font-size:11.5px;}
+  .log-tag.warn{color:var(--pink);}
+  .log-tag.done{color:var(--green);}
+  .log-desc{color:#cfc9ea;}
+
+  /* ---------- Testimonials ---------- */
+  .test-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .test-card{background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:26px;}
+  .test-id{font-family:var(--font-mono); font-size:11px; color:var(--muted); margin-bottom:16px; display:flex; justify-content:space-between;}
+  .test-status{color:var(--green);}
+  .test-card p.quote{font-size:14.5px; color:#dcd8f2; margin-bottom:18px;}
+  .test-person{font-size:13px; font-weight:600;}
+  .test-role{font-size:12px; color:var(--muted); font-family:var(--font-mono);}
+
+  /* ---------- Pricing ---------- */
+  .price-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  .price-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:32px 28px;
+    display:flex; flex-direction:column;
+  }
+  .price-card.featured{border-color:var(--cyan); background:linear-gradient(180deg, rgba(0,240,255,0.07), var(--surface) 45%); position:relative; box-shadow:0 20px 60px -24px rgba(0,240,255,0.35);}
+  .featured-tag{
+    position:absolute; top:-13px; left:28px; background:linear-gradient(90deg, var(--cyan), var(--violet)); color:#0a0916;
+    font-family:var(--font-mono); font-size:10.5px; font-weight:700; padding:4px 10px; border-radius:4px; letter-spacing:0.5px;
+  }
+  .price-card .tier{font-family:var(--font-mono); font-size:12px; color:var(--pink); letter-spacing:1px; margin-bottom:14px;}
+  .price-card h3{font-size:21px; margin-bottom:6px; font-family:var(--font-display); font-weight:700;}
+  .price-card .amount{font-family:var(--font-mono); font-size:32px; font-weight:700; margin:14px 0 22px;}
+  .price-card .amount span{font-size:14px; color:var(--muted); font-weight:400;}
+  .feat-list{list-style:none; margin-bottom:26px; flex:1;}
+  .feat-list li{font-size:14px; color:#cfc9ea; padding:8px 0; display:flex; gap:10px; border-top:1px solid var(--line);}
+  .feat-list li:first-child{border-top:none;}
+  .feat-list li::before{content:'▸'; color:var(--cyan); flex-shrink:0;}
+
+  /* ---------- FAQ ---------- */
+  .faq-item{border-bottom:1px solid var(--line);}
+  .faq-q{
+    width:100%; text-align:left; background:none; border:none; color:var(--text); cursor:pointer;
+    padding:22px 4px; font-size:16px; font-weight:600; display:flex; justify-content:space-between; align-items:center;
+    font-family:var(--font-sans);
+  }
+  .faq-q .ind{font-family:var(--font-mono); color:var(--pink); font-size:18px; transition:transform .2s;}
+  .faq-a{max-height:0; overflow:hidden; transition:max-height .25s ease;}
+  .faq-a p{padding:0 4px 22px; color:var(--muted); font-size:14.5px; max-width:680px;}
+  .faq-item.open .ind{transform:rotate(45deg);}
+
+  /* ---------- CTA band ---------- */
+  .cta-band{
+    background:var(--surface-raised); border-top:1px solid var(--line); border-bottom:1px solid var(--line);
+    text-align:center; padding:84px 0; position:relative; overflow:hidden;
+  }
+  .cta-band::before{
+    content:''; position:absolute; inset:0;
+    background:radial-gradient(ellipse 600px 300px at 50% 0%, rgba(255,46,136,0.12), transparent 70%);
+    pointer-events:none;
+  }
+  .cta-band h2{margin-bottom:16px;}
+  .cta-band p{color:var(--muted); margin-bottom:30px; font-size:16px;}
+
+  /* ---------- Footer ---------- */
+  footer{padding:64px 0 32px;}
+  .foot-grid{display:grid; grid-template-columns:2fr 1fr 1fr 1fr; gap:40px; margin-bottom:48px;}
+  .foot-brand p{color:var(--muted); font-size:14px; margin-top:14px; max-width:280px;}
+  .foot-col h4{font-family:var(--font-mono); font-size:12.5px; letter-spacing:0.5px; color:var(--muted); margin-bottom:16px;}
+  .foot-col a{display:block; font-size:14px; color:#cfc9ea; margin-bottom:11px;}
+  .foot-col a:hover{color:var(--cyan);}
+  .foot-bottom{border-top:1px solid var(--line); padding-top:24px; display:flex; justify-content:space-between; font-size:12.5px; color:var(--muted); font-family:var(--font-mono);}
+
+  /* ---------- Responsive ---------- */
+  @media (max-width:980px){
+    .navlinks{display:none;}
+    .burger{display:flex;}
+    .hero-single{padding:0 8px;}
+    .stats-grid{grid-template-columns:repeat(2,1fr);}
+    .stat{border-bottom:1px solid var(--line);}
+    .test-grid, .price-grid{grid-template-columns:1fr;}
+    .foot-grid{grid-template-columns:1fr 1fr; row-gap:32px;}
+    .log-line{grid-template-columns:1fr; gap:4px;}
+  }
+  @media (max-width:560px){
+    .wrap{padding:0 20px;}
+    .hero{padding-top:140px;}
+    .hero-actions{flex-direction:column; align-items:stretch;}
+    .foot-grid{grid-template-columns:1fr;}
+    .foot-bottom{flex-direction:column; gap:8px;}
+  }
+</style>
+</head>
+<body class="locked">
+
+<div id="splash">
+  <div class="splash-inner">
+    <div class="splash-boot">
+      <div class="bline"><span class="ok">✓</span> connecting to secure server...</div>
+      <div class="bline"><span class="ok">✓</span> verifying credentials...</div>
+      <div class="bline"><span class="ok">✓</span> access granted</div>
+    </div>
+    <div class="splash-glyph">&gt;_</div>
+    <h1 class="splash-title">Welcome to <span class="grad-text">Hackerpanku009</span></h1>
+    <p class="splash-sub">Loading your training console...</p>
+  </div>
+  <button class="splash-skip" id="splashSkip">Skip →</button>
+</div>
+
+<header>
+  <div class="wrap nav">
+    <a href="#top" class="logo"><div class="glyph">&gt;_</div><span class="txt">HACKERPANKU009</span></a>
+    <nav class="navlinks">
+      <a href="#top">Home</a>
+      <a href="#courses">Courses</a>
+      <a href="#tracks">Curriculum</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <div class="navcta">
+      <a href="login.html" class="btn btn-ghost">Log in</a>
+      <a href="#pricing" class="btn btn-primary">Get Clearance →</a>
+    </div>
+    <button class="burger" aria-label="Menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<section class="hero" id="top">
+  <div class="wrap hero-single">
+    <div class="eyebrow">STATUS: ENROLLMENT OPEN — NEXT COHORT MAR 02</div>
+    <h1>Learn to think<br>like an attacker.<br><span class="grad-text">Defend like a pro</span><span class="cursor">&nbsp;</span></h1>
+    <p class="lede">Hands-on offensive and defensive security training from Hackerpanku009 — built by working pentesters and SOC leads. No slideshows, just real labs, real vulnerable systems, real exam-ready skills.</p>
+    <div class="hero-actions">
+      <a href="#courses" class="btn btn-primary">Browse courses</a>
+      <a href="#tracks" class="btn btn-ghost">View career tracks →</a>
+    </div>
+    <div class="hero-note">$ trusted_by --employers "Deloitte, Cloudflare, Rapid7, HSBC, and 900+ security teams"</div>
+  </div>
+</section>
+
+<div class="stats-bar">
+  <div class="wrap stats-grid">
+    <div class="stat"><div class="num">42,300+</div><div class="label">Operators trained</div></div>
+    <div class="stat"><div class="num">210 hrs</div><div class="label">Hands-on lab time</div></div>
+    <div class="stat"><div class="num">96.8%</div><div class="label">Cert exam pass rate</div></div>
+    <div class="stat"><div class="num">$27K</div><div class="label">Avg. salary increase</div></div>
+  </div>
+</div>
+
+<section id="courses">
+  <div class="wrap">
+    <div class="section-head" style="margin-left:auto; margin-right:auto; text-align:center;">
+      <span class="kicker">// COURSE CATALOG</span>
+      <h2>Pick your entry point</h2>
+      <p>Every course is tagged by clearance level — how much prior experience it assumes. Use the arrows to browse all 8 courses.</p>
+    </div>
+
+    <div class="course-carousel">
+      <div class="course-viewport">
+        <div class="course-track" id="courseTrack">
+
+          <div class="course-slide">
+            <div class="card lvl1">
+              <div class="card-stripe"></div>
+              <div class="card-body">
+                <div class="card-top"><span class="clearance">LEVEL 01 · ENTRY</span></div>
+                <h3>Offensive Security Fundamentals</h3>
+                <p>Ethical hacking from first principles — reconnaissance, scanning, exploitation basics, and reporting, using a live practice range.</p>
+                <div class="card-meta">
+                  <span class="price">$249</span>
+                  <span class="duration">32 HRS</span>
+                </div>
+                <a href="#" class="card-link">View syllabus →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="course-slide">
+            <div class="card lvl1">
+              <div class="card-stripe"></div>
+              <div class="card-body">
+                <div class="card-top"><span class="clearance">LEVEL 01 · ENTRY</span></div>
+                <h3>SOC Analyst Bootcamp</h3>
+                <p>Triage alerts, read logs, and run incident response like a Tier-1 analyst inside a simulated security operations center.</p>
+                <div class="card-meta">
+                  <span class="price">$299</span>
+                  <span class="duration">40 HRS</span>
+                </div>
+                <a href="#" class="card-link">View syllabus →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="course-slide">
+            <div class="card lvl2">
+              <div class="card-stripe"></div>
+              <div class="card-body">
+                <div class="card-top"><span class="clearance">LEVEL 02 · INTERMEDIATE</span></div>
+                <h3>Network Penetration Testing</h3>
+                <p>Attack real internal networks: privilege escalation, lateral movement, Active Directory abuse, and post-exploitation.</p>
+                <div class="card-meta">
+                  <span class="price">$449</span>
+                  <span class="duration">55 HRS</span>
+                </div>
+                <a href="#" class="card-link">View syllabus →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="course-slide">
+            <div class="card lvl2">
+              <div class="card-stripe"></div>
+              <div class="card-body">
+                <div class="card-top"><span class="clearance">LEVEL 02 · INTERMEDIATE</span></div>
+                <h3>Web Application Security</h3>
+                <p>Master the OWASP Top 10 by breaking and fixing real vulnerable apps — injection, auth flaws, SSRF, and more.</p>
+                <div class="card-meta">
+                  <span class="price">$399</span>
+                  <span class="duration">46 HRS</span>
+                </div>
+                <a href="#" class="card-link">View syllabus →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="course-slide">
+            <div class="card lvl2">
+              <div class="card-stripe"></div>
+              <div class="card-body">
+                <div class="card-top"><span class="clearance">LEVEL 02 · INTERMEDIATE</span></div>
+                <h3>Cloud Security: AWS & Azure</h3>
+                <p>Secure and audit real cloud environments — IAM misconfigurations, storage exposure, and container security.</p>
+                <div class="card-meta">
+                  <span class="price">$429</span>
+                  <span class="duration">50 HRS</span>
+                </div>
+                <a href="#" class="card-link">View syllabus →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="course-slide">
+            <div class="card lvl3">
+              <div class="card-stripe"></div>
+              <div class="card-body">
+                <div class="card-top"><span class="clearance">LEVEL 03 · ADVANCED</span></div>
+                <h3>Malware Analysis & Reverse Engineering</h3>
+                <p>Pull real malware samples apart in an isolated lab — static analysis, dynamic debugging, and unpacking.</p>
+                <div class="card-meta">
+                  <span class="price">$549</span>
+                  <span class="duration">60 HRS</span>
+                </div>
+                <a href="#" class="card-link">View syllabus →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="course-slide">
+            <div class="card lvl3">
+              <div class="card-stripe"></div>
+              <div class="card-body">
+                <div class="card-top"><span class="clearance">LEVEL 03 · ADVANCED</span></div>
+                <h3>Digital Forensics & Incident Response</h3>
+                <p>Investigate real breach scenarios — disk and memory forensics, timeline reconstruction, and chain of custody.</p>
+                <div class="card-meta">
+                  <span class="price">$499</span>
+                  <span class="duration">52 HRS</span>
+                </div>
+                <a href="#" class="card-link">View syllabus →</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="course-slide">
+            <div class="card lvl3">
+              <div class="card-stripe"></div>
+              <div class="card-body">
+                <div class="card-top"><span class="clearance">LEVEL 03 · ADVANCED</span></div>
+                <h3>CISSP Exam Prep</h3>
+                <p>All 8 domains, structured for working professionals, with two full-length timed practice exams included.</p>
+                <div class="card-meta">
+                  <span class="price">$599</span>
+                  <span class="duration">70 HRS</span>
+                </div>
+                <a href="#" class="card-link">View syllabus →</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="carousel-nav">
+        <button class="nav-btn" id="coursePrev" aria-label="Previous course">←</button>
+        <span class="carousel-counter" id="courseCounter">1 / 8</span>
+        <button class="nav-btn" id="courseNext" aria-label="Next course">→</button>
+      </div>
+      <div class="carousel-dots" id="courseDots"></div>
+    </div>
+  </div>
+</section>
+
+
+<section id="tracks" style="background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">// SAMPLE CURRICULUM LOG</span>
+      <h2>What a first week looks like</h2>
+      <p>Pulled from the Offensive Security Fundamentals module log — every course ships with a schedule this specific.</p>
+    </div>
+    <div class="log-panel">
+      <div class="log-line"><span class="log-time">DAY 01 · 09:00</span><span class="log-tag">MODULE START</span><span class="log-desc">Lab environment setup & attacker mindset briefing</span></div>
+      <div class="log-line"><span class="log-time">DAY 01 · 14:30</span><span class="log-tag">LAB</span><span class="log-desc">Passive recon: OSINT against a target organization</span></div>
+      <div class="log-line"><span class="log-time">DAY 02 · 10:00</span><span class="log-tag">LAB</span><span class="log-desc">Active scanning with Nmap & service fingerprinting</span></div>
+      <div class="log-line"><span class="log-time">DAY 03 · 11:15</span><span class="log-tag warn">CHECKPOINT</span><span class="log-desc">Graded lab: enumerate and report 3 live vulnerabilities</span></div>
+      <div class="log-line"><span class="log-time">DAY 04 · 09:30</span><span class="log-tag">LAB</span><span class="log-desc">Exploiting a misconfigured service for initial access</span></div>
+      <div class="log-line"><span class="log-time">DAY 05 · 15:00</span><span class="log-tag done">MODULE COMPLETE</span><span class="log-desc">Write and submit a professional-grade pentest report</span></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">// FIELD REPORTS</span>
+      <h2>Resolved incidents</h2>
+      <p>What students said after finishing a track.</p>
+    </div>
+    <div class="test-grid">
+      <div class="test-card">
+        <div class="test-id"><span>CASE #4471</span><span class="test-status">RESOLVED</span></div>
+        <p class="quote">"I went from help-desk to SOC analyst in five months. The lab environments are the closest thing to real incident response I've found online."</p>
+        <div class="test-person">Priya Nair</div>
+        <div class="test-role">SOC Analyst, HDFC Bank</div>
+      </div>
+      <div class="test-card">
+        <div class="test-id"><span>CASE #4498</span><span class="test-status">RESOLVED</span></div>
+        <p class="quote">"The pentesting track doesn't hold your hand — you actually break things. That's exactly what I needed before my OSCP attempt."</p>
+        <div class="test-person">Marcus Webb</div>
+        <div class="test-role">Junior Pentester, Rapid7</div>
+      </div>
+      <div class="test-card">
+        <div class="test-id"><span>CASE #4522</span><span class="test-status">RESOLVED</span></div>
+        <p class="quote">"CISSP prep was ruthless in the best way. Passed on my first attempt after two mediocre attempts with other materials."</p>
+        <div class="test-person">Sofia Alaoui</div>
+        <div class="test-role">Security Lead, Cloudflare</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" style="background:var(--surface); border-top:1px solid var(--line); border-bottom:1px solid var(--line);">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">// ACCESS LEVELS</span>
+      <h2>Choose your clearance</h2>
+      <p>Buy a single course, commit to a career track, or unlock everything.</p>
+    </div>
+    <div class="price-grid">
+      <div class="price-card">
+        <div class="tier">LEVEL 01 ACCESS</div>
+        <h3>Single Course</h3>
+        <div class="amount">$249<span>one-time</span></div>
+        <ul class="feat-list">
+          <li>Access to 1 course of your choice</li>
+          <li>Full lab environment access</li>
+          <li>Certificate of completion</li>
+          <li>Lifetime access to that course</li>
+        </ul>
+        <a href="#" class="btn btn-ghost" style="justify-content:center;">Select course</a>
+      </div>
+
+      <div class="price-card featured">
+        <span class="featured-tag">MOST OPERATORS CHOOSE THIS</span>
+        <div class="tier">OPERATOR BUNDLE</div>
+        <h3>Career Track</h3>
+        <div class="amount">$899<span>/ track</span></div>
+        <ul class="feat-list">
+          <li>All courses in one career track (5-6 courses)</li>
+          <li>Priority lab queue & extended lab hours</li>
+          <li>1:1 monthly mentor session</li>
+          <li>Resume & portfolio review</li>
+          <li>Job-ready certificate</li>
+        </ul>
+        <a href="#" class="btn btn-primary" style="justify-content:center;">Start a track</a>
+      </div>
+
+      <div class="price-card">
+        <div class="tier">OMEGA CLEARANCE</div>
+        <h3>All-Access</h3>
+        <div class="amount">$1,499<span>/ year</span></div>
+        <ul class="feat-list">
+          <li>Every course, every track, unlimited</li>
+          <li>Unlimited lab hours, no queue</li>
+          <li>Weekly live threat-briefing sessions</li>
+          <li>Direct instructor Slack access</li>
+          <li>All future courses included</li>
+        </ul>
+        <a href="#" class="btn btn-ghost" style="justify-content:center;">Get Omega access</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="section-head">
+      <span class="kicker">// FAQ</span>
+      <h2>Before you enroll</h2>
+    </div>
+    <div style="max-width:760px;">
+      <div class="faq-item">
+        <button class="faq-q">Do I need prior IT experience? <span class="ind">+</span></button>
+        <div class="faq-a"><p>No — Level 01 courses assume only basic computer literacy. We teach networking and systems fundamentals as we go. Level 02 and 03 courses do expect the prerequisite level to be completed first.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Are the labs legal to practice on? <span class="ind">+</span></button>
+        <div class="faq-a"><p>Yes. Every lab runs in an isolated, purpose-built environment you access through your browser — nothing you do touches a real network, and no separate hardware is required.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">Do courses prepare me for certifications like OSCP or CISSP? <span class="ind">+</span></button>
+        <div class="faq-a"><p>Yes. Our advanced-track courses are mapped directly to exam objectives for OSCP, CISSP, and CompTIA Security+, and include timed practice exams.</p></div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">What if a course isn't right for me? <span class="ind">+</span></button>
+        <div class="faq-a"><p>Every course and track comes with a 14-day refund window — if it's not the right fit, email support and we'll refund it, no questions asked.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cta-band">
+  <div class="wrap">
+    <h2>Ready to start your first lab?</h2>
+    <p>Enrollment for the March cohort closes in 6 days.</p>
+    <a href="#pricing" class="btn btn-primary">Get clearance now →</a>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="logo"><div class="glyph">&gt;_</div><span class="txt">HACKERPANKU009</span></div>
+        <p>Hands-on cybersecurity training for people who want to actually break and defend real systems — not watch slides about them.</p>
+      </div>
+      <div class="foot-col">
+        <h4>COURSES</h4>
+        <a href="#">Offensive Security</a>
+        <a href="#">Web App Security</a>
+        <a href="#">Cloud Security</a>
+        <a href="#">Digital Forensics</a>
+      </div>
+      <div class="foot-col">
+        <h4>COMPANY</h4>
+        <a href="#">About</a>
+        <a href="#">Instructors</a>
+        <a href="#">Careers</a>
+        <a href="#">Contact</a>
+      </div>
+      <div class="foot-col">
+        <h4>LEGAL</h4>
+        <a href="#">Terms</a>
+        <a href="#">Privacy</a>
+        <a href="#">Refund Policy</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 HACKERPANKU009. All rights reserved.</span>
+      <span>STATUS: ALL SYSTEMS OPERATIONAL</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Splash / welcome screen
+  (function(){
+    const splash = document.getElementById('splash');
+    const skipBtn = document.getElementById('splashSkip');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let dismissed = false;
+
+    function dismiss(){
+      if(dismissed) return;
+      dismissed = true;
+      splash.classList.add('hide');
+      document.body.classList.remove('locked');
+    }
+
+    if(reduced){
+      dismiss();
+    } else {
+      setTimeout(dismiss, 3000);
+    }
+    skipBtn.addEventListener('click', dismiss);
+    document.addEventListener('keydown', (e) => { if(e.key === 'Enter' || e.key === 'Escape') dismiss(); });
+  })();
+
+  // Course carousel
+  (function(){
+    const track = document.getElementById('courseTrack');
+    const slides = Array.from(track.children);
+    const prevBtn = document.getElementById('coursePrev');
+    const nextBtn = document.getElementById('courseNext');
+    const counter = document.getElementById('courseCounter');
+    const dotsWrap = document.getElementById('courseDots');
+    let index = 0;
+
+    slides.forEach((_, i) => {
+      const dot = document.createElement('button');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.setAttribute('aria-label', 'Go to course ' + (i + 1));
+      dot.addEventListener('click', () => goTo(i));
+      dotsWrap.appendChild(dot);
+    });
+    const dots = Array.from(dotsWrap.children);
+
+    function render(){
+      track.style.transform = `translateX(-${index * 100}%)`;
+      counter.textContent = `${index + 1} / ${slides.length}`;
+      dots.forEach((d, i) => d.classList.toggle('active', i === index));
+    }
+    function goTo(i){
+      index = (i + slides.length) % slides.length;
+      render();
+    }
+
+    prevBtn.addEventListener('click', () => goTo(index - 1));
+    nextBtn.addEventListener('click', () => goTo(index + 1));
+
+    // keyboard support when carousel is in view
+    document.addEventListener('keydown', (e) => {
+      const rect = track.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+      if(!inView) return;
+      if(e.key === 'ArrowLeft') goTo(index - 1);
+      if(e.key === 'ArrowRight') goTo(index + 1);
+    });
+
+    render();
+  })();
+
+  // FAQ accordion
+  document.querySelectorAll('.faq-item').forEach(item => {
+    const q = item.querySelector('.faq-q');
+    const a = item.querySelector('.faq-a');
+    q.addEventListener('click', () => {
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => {
+        i.classList.remove('open');
+        i.querySelector('.faq-a').style.maxHeight = null;
+      });
+      if(!isOpen){
+        item.classList.add('open');
+        a.style.maxHeight = a.scrollHeight + 'px';
+      }
+    });
+  });
+
+  // Mobile menu toggle
+  const burger = document.querySelector('.burger');
+  const navlinks = document.querySelector('.navlinks');
+  burger.addEventListener('click', () => {
+    const shown = navlinks.style.display === 'flex';
+    navlinks.style.display = shown ? 'none' : 'flex';
+    navlinks.style.cssText += shown ? '' : 'position:absolute; top:74px; left:0; right:0; background:var(--ink); flex-direction:column; padding:20px 32px; border-bottom:1px solid var(--line); gap:20px;';
+  });
+</script>
+
+</body>
+</html>
