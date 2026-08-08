@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log In — HACKERPANKU009</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0916;
+    --surface:#141127;
+    --surface-raised:#1b1733;
+    --line:#2c2650;
+    --text:#eee9fb;
+    --muted:#8d84b3;
+    --cyan:#00f0ff;
+    --pink:#ff2e88;
+    --violet:#8b5cf6;
+    --green:#00e6a0;
+    --font-display:'Orbitron', sans-serif;
+    --font-mono:'JetBrains Mono', monospace;
+    --font-sans:'Inter', sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{
+    background:var(--ink);
+    color:var(--text);
+    font-family:var(--font-sans);
+    line-height:1.6;
+    min-height:100vh;
+    display:flex; flex-direction:column;
+    position:relative;
+    overflow-x:hidden;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 42px 42px;
+  }
+
+  /* animated background orbs */
+  .bg-orbs{position:fixed; inset:0; overflow:hidden; z-index:0; pointer-events:none;}
+  .orb{position:absolute; border-radius:50%; filter:blur(90px); opacity:0.55;}
+  .orb-1{
+    width:480px; height:480px; background:var(--violet); top:-140px; left:-100px;
+    animation:float1 16s ease-in-out infinite;
+  }
+  .orb-2{
+    width:420px; height:420px; background:var(--cyan); bottom:-160px; right:-120px;
+    opacity:0.35; animation:float2 20s ease-in-out infinite;
+  }
+  .orb-3{
+    width:320px; height:320px; background:var(--pink); top:40%; left:50%;
+    opacity:0.25; animation:float3 22s ease-in-out infinite;
+  }
+  @keyframes float1{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(60px,80px) scale(1.15);}
+  }
+  @keyframes float2{
+    0%,100%{transform:translate(0,0) scale(1);}
+    50%{transform:translate(-70px,-50px) scale(1.1);}
+  }
+  @keyframes float3{
+    0%,100%{transform:translate(-50%,-50%) scale(1);}
+    50%{transform:translate(-50%,-50%) translate(40px,-60px) scale(1.2);}
+  }
+
+  /* floating particles */
+  .particles{position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden;}
+  .particle{
+    position:absolute; bottom:-10px; border-radius:50%;
+    background:var(--cyan); box-shadow:0 0 8px 1px currentColor;
+    animation:rise linear infinite;
+  }
+  @keyframes rise{
+    0%{transform:translateY(0) translateX(0); opacity:0;}
+    10%{opacity:0.8;}
+    90%{opacity:0.5;}
+    100%{transform:translateY(-110vh) translateX(var(--drift,20px)); opacity:0;}
+  }
+
+  .topbar, main{position:relative; z-index:1;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:0.01ms !important; animation-iteration-count:1 !important; transition-duration:0.01ms !important;}
+    .orb, .particle{display:none;}
+  }
+
+  a{color:inherit; text-decoration:none;}
+  ::selection{background:var(--pink); color:#0a0916;}
+  :focus-visible{outline:2px solid var(--cyan); outline-offset:3px;}
+
+  /* top bar */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:26px 40px; position:relative;
+  }
+  .topbar::before{
+    content:''; position:absolute; top:0; left:0; right:0; height:2px;
+    background:linear-gradient(90deg, var(--cyan), var(--violet), var(--pink));
+  }
+  .logo{
+    font-family:var(--font-display); font-weight:800; font-size:16px; letter-spacing:0.5px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .glyph{
+    width:30px; height:30px; border-radius:7px; flex-shrink:0;
+    background:linear-gradient(135deg, var(--cyan), var(--pink));
+    display:flex; align-items:center; justify-content:center;
+    font-family:var(--font-mono); font-size:14px; font-weight:700; color:#0a0916;
+  }
+  .logo .txt{background:linear-gradient(90deg, var(--cyan), var(--pink)); -webkit-background-clip:text; background-clip:text; color:transparent;}
+  .back-link{
+    font-family:var(--font-mono); font-size:13px; color:var(--text); display:flex; align-items:center; gap:6px;
+    border:1px solid var(--line); background:var(--surface-raised); padding:9px 16px; border-radius:20px;
+    transition:border-color .15s, color .15s, transform .15s;
+  }
+  .back-link:hover{border-color:var(--cyan); color:var(--cyan); transform:translateY(-1px);}
+
+  /* centered main */
+  main{
+    flex:1; display:flex; align-items:center; justify-content:center; padding:40px 20px 60px;
+  }
+
+  .auth-card{
+    background:var(--surface); border:1px solid var(--line); border-radius:14px;
+    padding:44px 40px; width:100%; max-width:420px;
+    box-shadow:0 24px 70px -28px rgba(0,0,0,0.55);
+  }
+
+  .card-head{text-align:center; margin-bottom:28px;}
+  .card-head .tag{font-family:var(--font-mono); font-size:11.5px; color:var(--pink); letter-spacing:1px; display:block; margin-bottom:12px;}
+  .card-head h1{font-family:var(--font-display); font-size:24px; font-weight:700;}
+  .card-head p{color:var(--muted); font-size:13.5px; margin-top:8px;}
+
+  /* tab switcher */
+  .tabs{
+    display:grid; grid-template-columns:1fr 1fr; background:var(--surface-raised);
+    border:1px solid var(--line); border-radius:8px; padding:4px; margin-bottom:28px;
+  }
+  .tab{
+    text-align:center; padding:10px; font-family:var(--font-mono); font-size:12.5px;
+    color:var(--muted); border-radius:6px; cursor:pointer; background:none; border:none;
+    transition:background .2s, color .2s;
+  }
+  .tab.active{background:linear-gradient(90deg, var(--cyan), var(--violet)); color:#0a0916; font-weight:600;}
+
+  .field{margin-bottom:18px;}
+  .field label{
+    display:block; font-family:var(--font-mono); font-size:12px; color:var(--muted);
+    letter-spacing:0.4px; margin-bottom:8px;
+  }
+  .input-wrap{position:relative;}
+  .input-wrap input{
+    width:100%; background:var(--surface-raised); border:1px solid var(--line);
+    border-radius:6px; padding:13px 14px; color:var(--text); font-family:var(--font-sans);
+    font-size:14.5px; transition:border-color .15s, box-shadow .15s;
+  }
+  .input-wrap input::placeholder{color:#565073;}
+  .input-wrap input:focus{
+    outline:none; border-color:var(--cyan); box-shadow:0 0 0 3px rgba(0,240,255,0.12);
+  }
+  .toggle-pw{
+    position:absolute; right:12px; top:50%; transform:translateY(-50%);
+    background:none; border:none; color:var(--muted); font-family:var(--font-mono); font-size:11px;
+    cursor:pointer; padding:4px 6px;
+  }
+  .toggle-pw:hover{color:var(--cyan);}
+
+  .row-between{display:flex; align-items:center; justify-content:space-between; margin-bottom:24px; font-size:13px;}
+  .remember{display:flex; align-items:center; gap:8px; color:var(--muted);}
+  .remember input{accent-color:var(--cyan); width:15px; height:15px;}
+  .forgot{color:var(--cyan); font-weight:500;}
+  .forgot:hover{text-decoration:underline;}
+
+  .btn{
+    width:100%; font-family:var(--font-mono); font-weight:600; font-size:14px;
+    padding:14px 20px; border-radius:7px; cursor:pointer; border:none;
+    display:flex; align-items:center; justify-content:center; gap:8px; letter-spacing:0.3px;
+    transition:transform .15s, box-shadow .15s;
+  }
+  .btn-primary{background:linear-gradient(90deg, var(--cyan), var(--violet)); color:#0a0916;}
+  .btn-primary:hover{transform:translateY(-1px); box-shadow:0 8px 26px -6px rgba(0,240,255,0.5);}
+  .btn-primary:active{transform:translateY(0);}
+
+  .btn-outline{
+    background:none; border:1px solid var(--line); color:var(--text); margin-top:12px;
+  }
+  .btn-outline:hover{border-color:var(--pink); color:var(--pink); transform:translateY(-1px);}
+
+  .divider{display:flex; align-items:center; gap:14px; margin:24px 0; color:var(--muted); font-family:var(--font-mono); font-size:11px;}
+  .divider::before, .divider::after{content:''; flex:1; height:1px; background:var(--line);}
+
+  .form-panel{display:none;}
+  .form-panel.active{display:block;}
+
+  .status-line{
+    display:flex; align-items:center; gap:8px; margin-top:22px; font-family:var(--font-mono);
+    font-size:11.5px; color:var(--muted); justify-content:center;
+  }
+  .status-dot{width:6px; height:6px; border-radius:50%; background:var(--green);}
+
+  @media (max-width:480px){
+    .topbar{padding:20px;}
+    .auth-card{padding:32px 24px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-orbs">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+<div class="particles" id="particles"></div>
+
+<div class="topbar">
+  <a href="index.html" class="logo"><div class="glyph">&gt;_</div><span class="txt">HACKERPANKU009</span></a>
+  <nav style="display:flex; align-items:center; gap:22px;">
+    <a href="index.html" class="back-link" style="gap:8px;">🏠 Home</a>
+  </nav>
+</div>
+
+<main>
+  <div class="auth-card">
+    <div class="card-head">
+      <span class="tag">// SECURE ACCESS</span>
+      <h1 id="headTitle">Log in to your account</h1>
+      <p id="headSub">Enter your credentials to continue.</p>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" id="tabLogin">Log In</button>
+      <button class="tab" id="tabSignup">Create Account</button>
+    </div>
+
+    <!-- LOGIN FORM -->
+    <form class="form-panel active" id="loginPanel">
+      <div class="field">
+        <label for="loginEmail">Email address</label>
+        <div class="input-wrap">
+          <input type="email" id="loginEmail" placeholder="you@example.com" required autocomplete="email">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="loginPassword">Password</label>
+        <div class="input-wrap">
+          <input type="password" id="loginPassword" placeholder="Enter your password" required autocomplete="current-password">
+          <button type="button" class="toggle-pw" data-target="loginPassword">SHOW</button>
+        </div>
+      </div>
+
+      <div class="row-between">
+        <label class="remember"><input type="checkbox"> Remember me</label>
+        <a href="#" class="forgot">Forgot password?</a>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Log In →</button>
+
+      <div class="divider">OR</div>
+      <button type="button" class="btn btn-outline" id="goSignup">Create a new account</button>
+
+      <div class="status-line"><span class="status-dot"></span> Connection encrypted end-to-end</div>
+    </form>
+
+    <!-- SIGNUP FORM -->
+    <form class="form-panel" id="signupPanel">
+      <div class="field">
+        <label for="signupName">Full name</label>
+        <div class="input-wrap">
+          <input type="text" id="signupName" placeholder="Your name" required autocomplete="name">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="signupEmail">Email address</label>
+        <div class="input-wrap">
+          <input type="email" id="signupEmail" placeholder="you@example.com" required autocomplete="email">
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="signupPassword">Password</label>
+        <div class="input-wrap">
+          <input type="password" id="signupPassword" placeholder="Create a password" required autocomplete="new-password">
+          <button type="button" class="toggle-pw" data-target="signupPassword">SHOW</button>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">Create Account →</button>
+
+      <div class="divider">OR</div>
+      <button type="button" class="btn btn-outline" id="goLogin">Already have an account? Log in</button>
+
+      <div class="status-line"><span class="status-dot"></span> Connection encrypted end-to-end</div>
+    </form>
+  </div>
+</main>
+
+<script>
+  const tabLogin = document.getElementById('tabLogin');
+  const tabSignup = document.getElementById('tabSignup');
+  const loginPanel = document.getElementById('loginPanel');
+  const signupPanel = document.getElementById('signupPanel');
+  const headTitle = document.getElementById('headTitle');
+  const headSub = document.getElementById('headSub');
+
+  function showLogin(){
+    tabLogin.classList.add('active'); tabSignup.classList.remove('active');
+    loginPanel.classList.add('active'); signupPanel.classList.remove('active');
+    headTitle.textContent = 'Log in to your account';
+    headSub.textContent = 'Enter your credentials to continue.';
+  }
+  function showSignup(){
+    tabSignup.classList.add('active'); tabLogin.classList.remove('active');
+    signupPanel.classList.add('active'); loginPanel.classList.remove('active');
+    headTitle.textContent = 'Create your account';
+    headSub.textContent = 'Start your training in under a minute.';
+  }
+
+  tabLogin.addEventListener('click', showLogin);
+  tabSignup.addEventListener('click', showSignup);
+  document.getElementById('goSignup').addEventListener('click', showSignup);
+  document.getElementById('goLogin').addEventListener('click', showLogin);
+
+  // password show/hide
+  document.querySelectorAll('.toggle-pw').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const field = document.getElementById(btn.dataset.target);
+      const isPw = field.type === 'password';
+      field.type = isPw ? 'text' : 'password';
+      btn.textContent = isPw ? 'HIDE' : 'SHOW';
+    });
+  });
+
+  // demo submit handlers
+  [loginPanel, signupPanel].forEach(form => {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const btn = form.querySelector('.btn-primary');
+      const original = btn.textContent;
+      btn.textContent = 'Please wait...';
+      btn.style.opacity = '0.75';
+      setTimeout(() => {
+        btn.textContent = original;
+        btn.style.opacity = '1';
+        alert('This is a demo form — connect it to your backend/auth provider to make it functional.');
+      }, 900);
+    });
+  });
+</script>
+
+</body>
+</html>
