@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HACKERPANKU009 // SECURE_ACCESS</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg:#050109;
+    --panel:#0c0518cc;
+    --magenta:#ff2ee6;
+    --cyan:#00f7ff;
+    --violet:#a259ff;
+    --lime:#c6ff3d;
+    --text:#eae6ff;
+    --muted:#8f81b8;
+    --faint:#4a3d6e;
+    --border:#2a1c4d;
+    --f-display:'Orbitron', sans-serif;
+    --f-body:'Rajdhani', sans-serif;
+    --f-mono:'Share Tech Mono', monospace;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  a{ text-decoration:none; color:inherit; }
+  body{
+    background:var(--bg); color:var(--text); font-family:var(--f-body);
+    min-height:100vh; overflow-x:hidden; position:relative;
+    display:flex; flex-direction:column;
+  }
+
+  /* background layers (shared system) */
+  #bgCanvas{ position:fixed; inset:0; z-index:0; width:100%; height:100%; display:block; }
+  .scanlines{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:repeating-linear-gradient(0deg, rgba(0,247,255,0.025) 0px, rgba(0,247,255,0.025) 1px, transparent 1px, transparent 3px);
+    mix-blend-mode:screen;
+  }
+  .vignette{ position:fixed; inset:0; z-index:1; pointer-events:none; background:radial-gradient(ellipse at center, transparent 40%, #050109 100%); }
+  .flicker{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:rgba(255,46,230,0.015); animation:flick 6s infinite steps(1);
+  }
+  @keyframes flick{ 0%,89%,100%{opacity:0;} 90%{opacity:1;} 91%{opacity:0;} 94%{opacity:.6;} 95%{opacity:0;} }
+
+  main{ position:relative; z-index:2; flex:1; display:flex; flex-direction:column; }
+
+  /* minimal nav */
+  nav{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:20px 40px;
+    background:rgba(5,1,9,0.7); backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--border);
+  }
+  .logo{ font-family:var(--f-display); font-weight:800; font-size:16px; letter-spacing:0.06em; color:var(--cyan);
+    text-shadow:0 0 8px rgba(0,247,255,0.7), 0 0 22px rgba(0,247,255,0.3); }
+  .logo span{ color:var(--magenta); text-shadow:0 0 8px rgba(255,46,230,0.7); }
+  .home-link{
+    font-family:var(--f-mono); font-size:12px; color:#ffffff; letter-spacing:0.05em;
+    position:relative; padding-bottom:4px;
+  }
+  .home-link::after{
+    content:""; position:absolute; left:0; bottom:0; width:0; height:1px;
+    background:#ffffff; box-shadow:0 0 8px rgba(255,255,255,0.9);
+    transition:width .3s ease;
+  }
+  .home-link:hover::after{ width:100%; }
+
+  /* center stage */
+  .stage{
+    flex:1; display:flex; align-items:center; justify-content:center;
+    padding:50px 20px;
+  }
+
+  .auth-wrap{ width:100%; max-width:440px; }
+
+  .eyebrow{
+    font-family:var(--f-mono); font-size:11px; color:var(--lime); letter-spacing:0.2em;
+    margin-bottom:14px; display:flex; align-items:center; gap:10px; justify-content:center;
+  }
+  .eyebrow .bar{ width:24px; height:1px; background:var(--lime); box-shadow:0 0 6px var(--lime); }
+
+  h1{
+    font-family:var(--f-display); font-weight:900; font-size:26px;
+    text-align:center; text-transform:uppercase; margin-bottom:8px; letter-spacing:0.01em;
+  }
+  .subtext{ text-align:center; color:var(--muted); font-size:14px; margin-bottom:30px; }
+
+  /* tab switch */
+  .auth-tabs{
+    display:flex; border:1px solid var(--border); margin-bottom:26px;
+    background:var(--panel); position:relative;
+  }
+  .auth-tab{
+    flex:1; text-align:center; padding:13px; cursor:pointer;
+    font-family:var(--f-mono); font-size:12.5px; letter-spacing:0.08em;
+    color:var(--muted); text-transform:uppercase; position:relative; z-index:2;
+    transition:color .25s ease;
+  }
+  .auth-tab.active{ color:var(--bg); }
+  .tab-slider{
+    position:absolute; top:0; left:0; width:50%; height:100%;
+    background:var(--cyan); box-shadow:0 0 20px rgba(0,247,255,0.5);
+    transition:transform .35s cubic-bezier(.2,.8,.2,1);
+    z-index:1;
+  }
+  .tab-slider.signup{ transform:translateX(100%); background:var(--magenta); box-shadow:0 0 20px rgba(255,46,230,0.5); }
+
+  /* form panel */
+  .panel{
+    background:var(--panel); border:1px solid var(--border);
+    padding:30px 28px 28px; position:relative; overflow:hidden;
+  }
+  .panel::before{
+    content:""; position:absolute; inset:0; padding:1px;
+    background:linear-gradient(140deg, var(--cyan), transparent 35%, transparent 65%, var(--magenta));
+    -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); 
+     mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+
+    -webkit-mask-composite:xor; mask-composite:exclude;
+    opacity:0.5; pointer-events:none;
+  }
+
+  .form-view{ display:none; flex-direction:column; gap:18px; }
+  .form-view.active{ display:flex; animation:formIn .35s ease; }
+  @keyframes formIn{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+
+  .field{ display:flex; flex-direction:column; gap:8px; }
+  .field label{
+    font-family:var(--f-mono); font-size:10.5px; letter-spacing:0.1em; color:var(--faint);
+    text-transform:uppercase;
+  }
+  .field-input-wrap{
+    display:flex; align-items:center; gap:10px;
+    border:1px solid var(--border); background:#08031280;
+    padding:12px 14px; transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .field-input-wrap:focus-within{ border-color:var(--cyan); box-shadow:0 0 16px rgba(0,247,255,0.25); }
+  .field-input-wrap input{
+    flex:1; background:transparent; border:none; outline:none;
+    color:var(--text); font-family:var(--f-body); font-size:14.5px;
+  }
+  .field-input-wrap input::placeholder{ color:var(--faint); }
+  .toggle-pass{
+    font-family:var(--f-mono); font-size:10.5px; color:var(--muted);
+    cursor:pointer; letter-spacing:0.06em; user-select:none; white-space:nowrap;
+  }
+  .toggle-pass:hover{ color:var(--cyan); }
+
+  .row-between{
+    display:flex; justify-content:space-between; align-items:center;
+    font-size:12.5px; color:var(--muted);
+  }
+  .remember{ display:flex; align-items:center; gap:8px; cursor:pointer; }
+  .remember input{ accent-color:var(--cyan); width:14px; height:14px; }
+  .forgot{
+    color:var(--cyan); position:relative;
+  }
+  .forgot:hover{ text-shadow:0 0 8px rgba(0,247,255,0.6); }
+
+  .btn-submit{
+    width:100%; padding:14px; margin-top:6px;
+    font-family:var(--f-body); font-weight:700; font-size:14px; letter-spacing:0.05em;
+    color:var(--bg); background:var(--cyan); border:none; cursor:pointer;
+    text-transform:uppercase;
+    box-shadow:0 0 18px rgba(0,247,255,0.45);
+    transition:box-shadow .2s ease, transform .15s ease;
+    position:relative; overflow:hidden;
+  }
+  .btn-submit:hover{ box-shadow:0 0 32px rgba(0,247,255,0.85); transform:translateY(-1px); }
+  .btn-submit:active{ transform:translateY(0); }
+  #signupForm .btn-submit{ background:var(--magenta); box-shadow:0 0 18px rgba(255,46,230,0.45); }
+  #signupForm .btn-submit:hover{ box-shadow:0 0 32px rgba(255,46,230,0.85); }
+
+  .btn-submit .glitch-sweep{
+    position:absolute; top:0; left:-40%; width:40%; height:100%;
+    background:linear-gradient(90deg, transparent, rgba(255,255,255,0.5), transparent);
+    transform:skewX(-20deg);
+  }
+  .btn-submit:hover .glitch-sweep{ animation:sweep .7s ease; }
+  @keyframes sweep{ from{ left:-40%; } to{ left:120%; } }
+
+  .divider{
+    display:flex; align-items:center; gap:12px; margin:20px 0 4px;
+    color:var(--faint); font-family:var(--f-mono); font-size:10px; letter-spacing:0.15em;
+  }
+  .divider::before, .divider::after{ content:""; flex:1; height:1px; background:var(--border); }
+
+  .switch-line{ text-align:center; font-size:13px; color:var(--muted); }
+  .switch-line span{ color:var(--cyan); cursor:pointer; }
+  .switch-line span:hover{ text-shadow:0 0 8px rgba(0,247,255,0.6); }
+
+  .encrypted-note{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    margin-top:22px; font-family:var(--f-mono); font-size:10.5px; color:var(--faint); letter-spacing:0.08em;
+  }
+  .encrypted-note .dot{
+    width:6px; height:6px; border-radius:50%; background:var(--lime);
+    box-shadow:0 0 6px var(--lime); animation:pulse 1.8s infinite ease-in-out;
+  }
+  @keyframes pulse{0%,100%{opacity:1;}50%{opacity:.3;}}
+
+  footer{
+    position:relative; z-index:2;
+    padding:20px 40px; text-align:center;
+    font-family:var(--f-mono); font-size:10.5px; color:var(--faint);
+    border-top:1px solid var(--border);
+  }
+
+  @media(max-width:480px){
+    .stage{ padding:30px 16px; }
+    .panel{ padding:24px 20px 22px; }
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+<div class="flicker"></div>
+
+<main>
+  <nav>
+    <div class="logo">&gt;_ HACKERPANKU<span>009</span></div>
+    <a class="home-link" href="index.html">🏠 HOME</a>
+  </nav>
+
+  <div class="stage">
+    <div class="auth-wrap">
+      <div class="eyebrow"><span class="bar"></span>SECURE_ACCESS.SYS<span class="bar"></span></div>
+      <h1 id="formTitle">Log in to your account</h1>
+      <p class="subtext" id="formSubtext">Enter your credentials to continue.</p>
+
+      <div class="auth-tabs">
+        <div class="tab-slider" id="tabSlider"></div>
+        <div class="auth-tab active" data-tab="login">Log In</div>
+        <div class="auth-tab" data-tab="signup">Create Account</div>
+      </div>
+
+      <div class="panel">
+        <form class="form-view active" id="loginForm">
+          <div class="field">
+            <label>Email address</label>
+            <div class="field-input-wrap">
+              <input type="email" placeholder="you@domain.com" required>
+            </div>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <div class="field-input-wrap">
+              <input type="password" placeholder="••••••••" required id="loginPass">
+              <span class="toggle-pass" data-target="loginPass">SHOW</span>
+            </div>
+          </div>
+          <div class="row-between">
+            <label class="remember"><input type="checkbox"> Remember me</label>
+            <a class="forgot" href="#">Forgot password?</a>
+          </div>
+          <button type="submit" class="btn-submit"><span class="glitch-sweep"></span>Log In →</button>
+          <div class="divider">OR</div>
+          <div class="switch-line">Don't have an account? <span data-switch="signup">Create one</span></div>
+        </form>
+
+        <form class="form-view" id="signupForm">
+          <div class="field">
+            <label>Full name</label>
+            <div class="field-input-wrap">
+              <input type="text" placeholder="Your name" required>
+            </div>
+          </div>
+          <div class="field">
+            <label>Email address</label>
+            <div class="field-input-wrap">
+              <input type="email" placeholder="you@domain.com" required>
+            </div>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <div class="field-input-wrap">
+              <input type="password" placeholder="••••••••" required id="signupPass">
+              <span class="toggle-pass" data-target="signupPass">SHOW</span>
+            </div>
+          </div>
+          <button type="submit" class="btn-submit"><span class="glitch-sweep"></span>Create Account →</button>
+          <div class="divider">OR</div>
+          <div class="switch-line">Already have an account? <span data-switch="login">Log in</span></div>
+        </form>
+      </div>
+
+      <div class="encrypted-note"><span class="dot"></span>CONNECTION ENCRYPTED END-TO-END</div>
+    </div>
+  </div>
+
+  <footer>© 2026 HACKERPANKU009 · NODE_STATUS: STABLE</footer>
+</main>
+
+<script>
+/* ===== background animation (shared system) ===== */
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+let W, H, DPR;
+function resize(){
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W*DPR; canvas.height = H*DPR;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+resize();
+window.addEventListener('resize', resize);
+
+const N = 70;
+const particles = Array.from({length:N}, ()=>({
+  x: Math.random()*W, y: Math.random()*H,
+  vx: (Math.random()-0.5)*0.15, vy: (Math.random()-0.5)*0.15,
+  r: Math.random()*1.6+0.4,
+  hue: Math.random() > 0.5 ? 'rgba(0,247,255,' : 'rgba(255,46,230,'
+}));
+
+let gridOffset = 0;
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  const horizon = H*0.32;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(122,60,200,0.16)';
+  ctx.lineWidth = 1;
+  const vCount = 24;
+  for(let i=0;i<=vCount;i++){
+    const xTop = (i/vCount)*W;
+    const xBottom = W/2 + (xTop - W/2)*3.4;
+    ctx.beginPath();
+    ctx.moveTo(xTop, horizon);
+    ctx.lineTo(xBottom, H);
+    ctx.stroke();
+  }
+  const hCount = 14;
+  for(let i=0;i<hCount;i++){
+    let t = ((i/hCount) + gridOffset*0.0006) % 1;
+    const y = horizon + Math.pow(t,2.2)*(H-horizon);
+    const alpha = 0.05 + t*0.22;
+    ctx.strokeStyle = `rgba(0,247,255,${alpha*0.5})`;
+    ctx.beginPath();
+    ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+  }
+  ctx.restore();
+
+  const grad = ctx.createRadialGradient(W/2,horizon,0,W/2,horizon,W*0.55);
+  grad.addColorStop(0,'rgba(255,46,230,0.10)');
+  grad.addColorStop(0.5,'rgba(162,89,255,0.05)');
+  grad.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  particles.forEach(p=>{
+    p.x += p.vx; p.y += p.vy;
+    if(p.x<0) p.x=W; if(p.x>W) p.x=0;
+    if(p.y<0) p.y=H; if(p.y>H) p.y=0;
+    ctx.beginPath();
+    ctx.fillStyle = p.hue + '0.7)';
+    ctx.shadowColor = p.hue + '0.9)';
+    ctx.shadowBlur = 6;
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+  });
+  ctx.shadowBlur = 0;
+
+  gridOffset += 1;
+  requestAnimationFrame(draw);
+}
+draw();
+
+/* ===== tab switching ===== */
+const tabs = document.querySelectorAll('.auth-tab');
+const slider = document.getElementById('tabSlider');
+const loginForm = document.getElementById('loginForm');
+const signupForm = document.getElementById('signupForm');
+const formTitle = document.getElementById('formTitle');
+const formSubtext = document.getElementById('formSubtext');
+
+function switchTo(tab){
+  tabs.forEach(t=>t.classList.toggle('active', t.dataset.tab===tab));
+  slider.classList.toggle('signup', tab==='signup');
+  loginForm.classList.toggle('active', tab==='login');
+  signupForm.classList.toggle('active', tab==='signup');
+  if(tab==='login'){
+    formTitle.textContent = 'Log in to your account';
+    formSubtext.textContent = 'Enter your credentials to continue.';
+  } else {
+    formTitle.textContent = 'Create your account';
+    formSubtext.textContent = 'Get access to the training console.';
+  }
+}
+
+tabs.forEach(t=> t.addEventListener('click', ()=> switchTo(t.dataset.tab)));
+document.querySelectorAll('[data-switch]').forEach(el=>{
+  el.addEventListener('click', ()=> switchTo(el.dataset.switch));
+});
+
+/* ===== password show/hide ===== */
+document.querySelectorAll('.toggle-pass').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const input = document.getElementById(btn.dataset.target);
+    const isPass = input.type === 'password';
+    input.type = isPass ? 'text' : 'password';
+    btn.textContent = isPass ? 'HIDE' : 'SHOW';
+  });
+});
+
+/* ===== prevent actual submit (no backend) ===== */
+[loginForm, signupForm].forEach(f=>{
+  f.addEventListener('submit', (e)=> e.preventDefault());
+});
+</script>
+</body>
+</html>

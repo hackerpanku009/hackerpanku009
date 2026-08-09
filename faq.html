@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HACKERPANKU009 // FAQ_INDEX</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;800;900&family=Share+Tech+Mono&family=Rajdhani:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg:#050109;
+    --panel:#0c0518cc;
+    --magenta:#ff2ee6;
+    --cyan:#00f7ff;
+    --violet:#a259ff;
+    --lime:#c6ff3d;
+    --text:#eae6ff;
+    --muted:#8f81b8;
+    --faint:#4a3d6e;
+    --border:#2a1c4d;
+    --f-display:'Orbitron', sans-serif;
+    --f-body:'Rajdhani', sans-serif;
+    --f-mono:'Share Tech Mono', monospace;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  a{ text-decoration:none; color:inherit; }
+  html{scroll-behavior:smooth;}
+  body{ background:var(--bg); color:var(--text); font-family:var(--f-body); min-height:100vh; overflow-x:hidden; position:relative; }
+
+  #bgCanvas{ position:fixed; inset:0; z-index:0; width:100%; height:100%; display:block; }
+  .scanlines{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:repeating-linear-gradient(0deg, rgba(0,247,255,0.025) 0px, rgba(0,247,255,0.025) 1px, transparent 1px, transparent 3px);
+    mix-blend-mode:screen;
+  }
+  .vignette{ position:fixed; inset:0; z-index:1; pointer-events:none; background:radial-gradient(ellipse at center, transparent 40%, #050109 100%); }
+  .flicker{
+    position:fixed; inset:0; z-index:1; pointer-events:none;
+    background:rgba(255,46,230,0.015); animation:flick 6s infinite steps(1);
+  }
+  @keyframes flick{ 0%,89%,100%{opacity:0;} 90%{opacity:1;} 91%{opacity:0;} 94%{opacity:.6;} 95%{opacity:0;} }
+
+  main{position:relative; z-index:2;}
+
+  nav{
+    display:flex; justify-content:space-between; align-items:center;
+    padding:20px 40px; border-bottom:1px solid var(--border);
+    background:rgba(5,1,9,0.7); backdrop-filter:blur(8px);
+    position:sticky; top:0; z-index:20;
+  }
+  .logo{ font-family:var(--f-display); font-weight:800; font-size:16px; letter-spacing:0.06em; color:var(--cyan);
+    text-shadow:0 0 8px rgba(0,247,255,0.7), 0 0 22px rgba(0,247,255,0.3); }
+  .logo span{ color:var(--magenta); text-shadow:0 0 8px rgba(255,46,230,0.7); }
+  .navlinks{ display:flex; gap:30px; font-size:13px; letter-spacing:0.04em; color:#ffffff; text-transform:uppercase; }
+  .navlinks a{ position:relative; padding-bottom:4px; color:#ffffff; transition:text-shadow .25s ease; }
+  .navlinks a::after{
+    content:""; position:absolute; left:0; bottom:0; width:0; height:1px;
+    background:#ffffff; box-shadow:0 0 8px rgba(255,255,255,0.9);
+    transition:width .3s ease;
+  }
+  .navlinks a:hover{ text-shadow:0 0 10px rgba(255,255,255,0.7); }
+  .navlinks a:hover::after{ width:100%; }
+  .btn-neon{
+    font-family:var(--f-body); font-weight:700; font-size:13px; letter-spacing:0.05em;
+    color:var(--bg); background:var(--lime); padding:10px 20px; text-transform:uppercase;
+    border:none; cursor:pointer; box-shadow:0 0 16px rgba(198,255,61,0.5);
+    transition:box-shadow .2s ease, transform .2s ease; display:inline-block; text-align:center;
+  }
+  .btn-neon:hover{ box-shadow:0 0 30px rgba(198,255,61,0.9); transform:translateY(-1px); }
+  @media(max-width:840px){ .navlinks{display:none;} }
+
+  .hero{ max-width:1120px; margin:0 auto; padding:70px 40px 30px; }
+  .eyebrow{
+    font-family:var(--f-mono); font-size:12px; color:var(--lime); letter-spacing:0.2em;
+    margin-bottom:18px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow .bar{ width:30px; height:1px; background:var(--lime); box-shadow:0 0 6px var(--lime); }
+  h1{
+    font-family:var(--f-display); font-weight:900; font-size:clamp(32px,5vw,54px);
+    line-height:1.08; letter-spacing:0.01em; text-transform:uppercase;
+  }
+  h1 .l1{ color:var(--text); display:block; }
+  h1 .l2{
+    display:block;
+    background:linear-gradient(90deg, var(--magenta), var(--cyan));
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+    filter:drop-shadow(0 0 18px rgba(255,46,230,0.35));
+  }
+  .hero p{ max-width:600px; margin-top:20px; font-size:16px; color:var(--muted); line-height:1.7; }
+
+  /* search */
+  .search-wrap{
+    max-width:1120px; margin:30px auto 0; padding:0 40px;
+  }
+  .search-box{
+    display:flex; align-items:center; gap:12px;
+    border:1px solid var(--border); background:var(--panel);
+    padding:14px 18px; transition:border-color .2s ease, box-shadow .2s ease;
+  }
+  .search-box:focus-within{ border-color:var(--cyan); box-shadow:0 0 20px rgba(0,247,255,0.25); }
+  .search-box .prompt{ font-family:var(--f-mono); color:var(--cyan); font-size:14px; }
+  .search-box input{
+    flex:1; background:transparent; border:none; outline:none;
+    color:var(--text); font-family:var(--f-mono); font-size:14px;
+  }
+  .search-box input::placeholder{ color:var(--faint); }
+  .result-count{ font-family:var(--f-mono); font-size:11px; color:var(--faint); }
+
+  .section-label{
+    max-width:1120px; margin:44px auto 20px; padding:0 40px;
+    display:flex; align-items:center; gap:14px;
+  }
+  .section-label .num{ font-family:var(--f-mono); color:var(--faint); font-size:13px; }
+  .section-label h2{ font-family:var(--f-display); font-size:15px; letter-spacing:0.12em; color:var(--muted); text-transform:uppercase; }
+  .section-label .line{ flex:1; height:1px; background:linear-gradient(90deg, var(--border), transparent); }
+
+  /* category tabs */
+  .cat-tabs{
+    max-width:1120px; margin:0 auto; padding:0 40px;
+    display:flex; gap:10px; flex-wrap:wrap;
+  }
+  .cat-tab{
+    font-family:var(--f-mono); font-size:12px; letter-spacing:0.06em;
+    color:var(--muted); border:1px solid var(--border);
+    padding:10px 18px; cursor:pointer; text-transform:uppercase;
+    transition:all .2s ease; background:var(--panel);
+  }
+  .cat-tab:hover{ color:var(--text); border-color:var(--faint); }
+  .cat-tab.active{
+    color:var(--bg); background:var(--cyan); border-color:var(--cyan);
+    box-shadow:0 0 18px rgba(0,247,255,0.45);
+  }
+
+  /* faq list */
+  .faq-wrap{ max-width:820px; margin:30px auto 0; padding:0 40px 40px; }
+  .faq-item{
+    border:1px solid var(--border); background:var(--panel);
+    margin-bottom:12px; overflow:hidden;
+    transition:border-color .2s ease;
+  }
+  .faq-item:hover{ border-color:var(--faint); }
+  .faq-item.open{ border-color:var(--cyan); }
+  .faq-q{
+    padding:18px 22px; cursor:pointer; display:flex; justify-content:space-between; align-items:center; gap:16px;
+    font-family:var(--f-body); font-weight:600; font-size:15.5px;
+  }
+  .faq-q .qtext{ flex:1; }
+  .faq-q .qtag{
+    font-family:var(--f-mono); font-size:9.5px; color:var(--violet); letter-spacing:0.08em;
+    border:1px solid rgba(162,89,255,0.4); padding:3px 8px; white-space:nowrap;
+  }
+  .faq-item.open .faq-q{ color:var(--cyan); text-shadow:0 0 10px rgba(0,247,255,0.4); }
+  .faq-q .plus{ font-family:var(--f-mono); color:var(--muted); transition:transform .25s ease; font-size:18px; }
+  .faq-item.open .plus{ transform:rotate(45deg); color:var(--magenta); }
+  .faq-a{ max-height:0; overflow:hidden; transition:max-height .4s ease; }
+  .faq-a-inner{ padding:0 22px 20px; font-size:14px; color:var(--muted); line-height:1.75; }
+
+  .empty-state{
+    text-align:center; padding:50px 20px; color:var(--faint);
+    font-family:var(--f-mono); font-size:13px; display:none;
+  }
+
+  .cta-strip{
+    max-width:1120px; margin:20px auto 60px; padding:40px; text-align:center;
+    border:1px solid var(--border); background:var(--panel);
+  }
+  .cta-strip h3{ font-family:var(--f-display); font-size:22px; text-transform:uppercase; margin-bottom:14px; }
+  .cta-strip p{ color:var(--muted); font-size:14px; margin-bottom:22px; }
+
+  footer{
+    position:relative; z-index:2;
+    max-width:1120px; margin:0 auto; padding:26px 40px;
+    display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;
+    border-top:1px solid var(--border);
+    font-family:var(--f-mono); font-size:11px; color:var(--faint);
+  }
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+<div class="scanlines"></div>
+<div class="vignette"></div>
+<div class="flicker"></div>
+
+<main>
+  <nav>
+    <div class="logo">&gt;_ HACKERPANKU<span>009</span></div>
+    <div class="navlinks">
+      <a href="index.html">Home</a>
+      <a href="cources.html">Courses</a>
+      <a href="curriculum.html">Curriculum</a>
+      <a href="pricing.html">Pricing</a>
+      <a href="#" class="active">FAQ</a>
+    </div>
+    <a class="btn-neon" href="pricing-cyberpunk.html">Get Clearance</a>
+  </nav>
+
+  <section class="hero">
+    <div class="eyebrow"><span class="bar"></span>FAQ_INDEX.SYS // QUERY THE DATABASE</div>
+    <h1><span class="l1">Got questions?</span><span class="l2">Run a Query.</span></h1>
+    <p>Everything people ask before enrolling — search it directly, or filter by category below.</p>
+  </section>
+
+  <div class="search-wrap">
+    <div class="search-box">
+      <span class="prompt">&gt;</span>
+      <input type="text" id="searchInput" placeholder="search_faq --query 'refund policy'">
+      <span class="result-count" id="resultCount"></span>
+    </div>
+  </div>
+
+  <div class="section-label">
+    <span class="num">01</span>
+    <h2>Filter by Category</h2>
+    <div class="line"></div>
+  </div>
+
+  <div class="cat-tabs" id="catTabs"></div>
+
+  <div class="faq-wrap" id="faqWrap"></div>
+  <div class="empty-state" id="emptyState">// NO MATCHING RECORDS FOUND — try a different query</div>
+
+  <div class="cta-strip">
+    <h3>Still stuck?</h3>
+    <p>Message the team directly and we'll get back within a day.</p>
+    <a class="btn-neon" href="https://hackerpanku009.pankajhooda009.workers.dev/#top">Contact Support →</a>
+  </div>
+
+  <footer>
+    <div>© 2026 HACKERPANKU009</div>
+    <div>CONNECTION ENCRYPTED · NODE_STATUS: STABLE</div>
+  </footer>
+</main>
+
+<script>
+/* ===== background animation (shared system) ===== */
+const canvas = document.getElementById('bgCanvas');
+const ctx = canvas.getContext('2d');
+let W, H, DPR;
+function resize(){
+  DPR = Math.min(window.devicePixelRatio || 1, 2);
+  W = window.innerWidth; H = window.innerHeight;
+  canvas.width = W*DPR; canvas.height = H*DPR;
+  canvas.style.width = W+'px'; canvas.style.height = H+'px';
+  ctx.setTransform(DPR,0,0,DPR,0,0);
+}
+resize();
+window.addEventListener('resize', resize);
+
+const N = 70;
+const particles = Array.from({length:N}, ()=>({
+  x: Math.random()*W, y: Math.random()*H,
+  vx: (Math.random()-0.5)*0.15, vy: (Math.random()-0.5)*0.15,
+  r: Math.random()*1.6+0.4,
+  hue: Math.random() > 0.5 ? 'rgba(0,247,255,' : 'rgba(255,46,230,'
+}));
+
+let gridOffset = 0;
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  const horizon = H*0.32;
+  ctx.save();
+  ctx.strokeStyle = 'rgba(122,60,200,0.16)';
+  ctx.lineWidth = 1;
+  const vCount = 24;
+  for(let i=0;i<=vCount;i++){
+    const xTop = (i/vCount)*W;
+    const xBottom = W/2 + (xTop - W/2)*3.4;
+    ctx.beginPath();
+    ctx.moveTo(xTop, horizon);
+    ctx.lineTo(xBottom, H);
+    ctx.stroke();
+  }
+  const hCount = 14;
+  for(let i=0;i<hCount;i++){
+    let t = ((i/hCount) + gridOffset*0.0006) % 1;
+    const y = horizon + Math.pow(t,2.2)*(H-horizon);
+    const alpha = 0.05 + t*0.22;
+    ctx.strokeStyle = `rgba(0,247,255,${alpha*0.5})`;
+    ctx.beginPath();
+    ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+  }
+  ctx.restore();
+
+  const grad = ctx.createRadialGradient(W/2,horizon,0,W/2,horizon,W*0.55);
+  grad.addColorStop(0,'rgba(255,46,230,0.10)');
+  grad.addColorStop(0.5,'rgba(162,89,255,0.05)');
+  grad.addColorStop(1,'rgba(0,0,0,0)');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  particles.forEach(p=>{
+    p.x += p.vx; p.y += p.vy;
+    if(p.x<0) p.x=W; if(p.x>W) p.x=0;
+    if(p.y<0) p.y=H; if(p.y>H) p.y=0;
+    ctx.beginPath();
+    ctx.fillStyle = p.hue + '0.7)';
+    ctx.shadowColor = p.hue + '0.9)';
+    ctx.shadowBlur = 6;
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+  });
+  ctx.shadowBlur = 0;
+
+  gridOffset += 1;
+  requestAnimationFrame(draw);
+}
+draw();
+
+/* ===== FAQ data ===== */
+const categories = [
+  {id:'all', label:'ALL'},
+  {id:'general', label:'GENERAL'},
+  {id:'courses', label:'COURSES & LABS'},
+  {id:'pricing', label:'PRICING & PAYMENT'},
+  {id:'career', label:'CERTS & CAREER'}
+];
+
+const faqs = [
+  {cat:'general', q:'Do I need prior IT experience to start?', a:'No — Level 01 courses assume only basic computer literacy. We teach networking and systems fundamentals as we go. Level 02 and 03 courses expect the prerequisite level to be completed first.'},
+  {cat:'general', q:'What equipment do I need?', a:'Just a laptop and a browser. Every lab runs in an isolated cloud environment you access remotely — no separate hardware, VMs, or high-end specs required on your end.'},
+  {cat:'general', q:'Is there a mobile app?', a:'Course videos and progress tracking work fine in a mobile browser, but the hands-on labs are built for a full desktop or laptop screen.'},
+  {cat:'courses', q:'Are the labs legal to practice on?', a:'Yes. Every lab runs in an isolated, purpose-built environment — nothing you do touches a real network, and there is zero legal risk in completing any exercise as designed.'},
+  {cat:'courses', q:'How long do I have access to a course?', a:'A single-course purchase includes lifetime access to that course, including future content updates. Career Track and All-Access plans follow their own access windows, shown at checkout.'},
+  {cat:'courses', q:'Can I skip ahead if I already know the basics?', a:'Yes — each course has an optional placement check at the start. Pass it and you can jump straight to the labs without sitting through material you already know.'},
+  {cat:'courses', q:'What happens if I get stuck on a lab?', a:'Every course includes access to a help channel monitored by instructors, plus written walkthroughs for every lab that unlock after a set number of attempts.'},
+  {cat:'pricing', q:'What if a course isn\u2019t right for me?', a:'Every course and track comes with a 14-day refund window — if it\u2019s not the right fit, contact support and we\u2019ll refund it, no questions asked.'},
+  {cat:'pricing', q:'Can I switch from a single course to a Career Track later?', a:'Yes — the price of any single course you\u2019ve already bought is credited toward a Career Track upgrade within 30 days of purchase.'},
+  {cat:'pricing', q:'Do you offer student or team discounts?', a:'Yes, both are available. Students can apply with a valid .edu email, and teams of 5 or more get volume pricing — contact support for a custom quote.'},
+  {cat:'pricing', q:'What payment methods are accepted?', a:'All major credit and debit cards, plus PayPal. Career Track and All-Access plans also support installment billing at checkout.'},
+  {cat:'career', q:'Do courses prepare me for certifications like OSCP or CISSP?', a:'Yes. Our advanced-track courses are mapped directly to exam objectives for OSCP, CISSP, and CompTIA Security+, and include timed practice exams.'},
+  {cat:'career', q:'Do I get a certificate after finishing a course?', a:'Yes — every completed course issues a verifiable certificate with a unique ID you can link on LinkedIn or a resume.'},
+  {cat:'career', q:'Is there job placement support?', a:'Career Track and All-Access members get a resume review, mock interview session, and access to a private job-postings channel from partner employers.'}
+];
+
+const tabsWrap = document.getElementById('catTabs');
+const faqWrap = document.getElementById('faqWrap');
+const emptyState = document.getElementById('emptyState');
+const resultCount = document.getElementById('resultCount');
+const searchInput = document.getElementById('searchInput');
+
+let activeCat = 'all';
+let searchTerm = '';
+
+tabsWrap.innerHTML = categories.map(c=>`
+  <div class="cat-tab ${c.id==='all'?'active':''}" data-id="${c.id}">${c.label}</div>
+`).join('');
+tabsWrap.querySelectorAll('.cat-tab').forEach(tab=>{
+  tab.addEventListener('click', ()=>{
+    activeCat = tab.dataset.id;
+    tabsWrap.querySelectorAll('.cat-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    renderFaqs();
+  });
+});
+
+searchInput.addEventListener('input', (e)=>{
+  searchTerm = e.target.value.trim().toLowerCase();
+  renderFaqs();
+});
+
+function renderFaqs(){
+  let list = faqs.filter(f => activeCat==='all' || f.cat===activeCat);
+  if(searchTerm){
+    list = list.filter(f => f.q.toLowerCase().includes(searchTerm) || f.a.toLowerCase().includes(searchTerm));
+  }
+
+  resultCount.textContent = searchTerm ? `${list.length} MATCH${list.length!==1?'ES':''}` : '';
+  emptyState.style.display = list.length ? 'none' : 'block';
+
+  faqWrap.innerHTML = list.map((f,i)=>{
+    const catLabel = categories.find(c=>c.id===f.cat).label;
+    return `
+      <div class="faq-item">
+        <div class="faq-q">
+          <span class="qtext">${f.q}</span>
+          <span class="qtag">${catLabel}</span>
+          <span class="plus">+</span>
+        </div>
+        <div class="faq-a"><div class="faq-a-inner">${f.a}</div></div>
+      </div>
+    `;
+  }).join('');
+
+  faqWrap.querySelectorAll('.faq-item').forEach(item=>{
+    const qEl = item.querySelector('.faq-q');
+    const aEl = item.querySelector('.faq-a');
+    qEl.addEventListener('click', ()=>{
+      const isOpen = item.classList.contains('open');
+      faqWrap.querySelectorAll('.faq-item.open').forEach(o=>{
+        if(o!==item){ o.classList.remove('open'); o.querySelector('.faq-a').style.maxHeight = null; }
+      });
+      if(isOpen){ item.classList.remove('open'); aEl.style.maxHeight = null; }
+      else { item.classList.add('open'); aEl.style.maxHeight = aEl.scrollHeight + 'px'; }
+    });
+  });
+}
+
+renderFaqs();
+</script>
+</body>
+</html>
